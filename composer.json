@@ -1,0 +1,21 @@
+{
+    "name": "aval/cors",
+    "description": "The Aval Cors package.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Aval\\Cors\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammed Taha",
+            "email": "bmt.mohammedtaha@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2"
+    },
+    "minimum-stability": "dev"
+}
