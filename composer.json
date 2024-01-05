@@ -1,0 +1,23 @@
+{
+    "name": "effectra/cors",
+    "description": "PHP library for enabling CORS (Cross-Origin Resource Sharing) in HTTP requests/responses. It follows PSR guidelines, and can be easily integrated into PHP projects.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Effectra\\Cors\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammed Taha",
+            "email": "info@mohammedtaha.net"
+        }
+    ],
+    "require": {
+        "psr/http-message": "^2.0@dev",
+        "psr/http-server-handler": "^1.0@dev",
+        "psr/http-server-middleware": "^1.0@dev"
+    },
+    "minimum-stability": "stable"
+}
