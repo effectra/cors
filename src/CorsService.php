@@ -129,7 +129,7 @@ class CorsService
             return true;
         }
 
-        $origin = (string) $request->headers->get('Origin');
+        $origin = $request->getHeaderLine('Origin');
 
         if (in_array($origin, $this->allowedOrigins)) {
             return true;
@@ -161,18 +161,19 @@ class CorsService
     {
         if ($this->allowAllOrigins === true && !$this->supportsCredentials) {
             // Safe+cacheable, allow everything
-           $response = $response->withAddedHeader('Access-Control-Allow-Origin', '*');
+           $response->addHeader('Access-Control-Allow-Origin', '*');
         } elseif ($this->isSingleOriginAllowed()) {
             // Single origins can be safely set
-           $response = $response->withAddedHeader('Access-Control-Allow-Origin', array_values($this->allowedOrigins)[0]);
+           $response->addHeader('Access-Control-Allow-Origin', array_values($this->allowedOrigins)[0]);
         } else {
             // For dynamic headers, set the requested Origin header when set and allowed
             if ($this->isCorsRequest($request) && $this->isOriginAllowed($request)) {
-               $response = $response->withAddedHeader('Access-Control-Allow-Origin', (string) $request->headers->get('Origin'));
+               $response->addHeader('Access-Control-Allow-Origin', (string) $request->headers->get('Origin'));
             }
 
             $this->varyHeader($response, 'Origin');
         }
+
     }
 
     private function isSingleOriginAllowed(): bool
@@ -187,53 +188,53 @@ class CorsService
     private function configureAllowedMethods(ResponseInterface $response, RequestInterface $request): void
     {
         if ($this->allowAllMethods === true) {
-            $allowMethods = strtoupper((string) $request->headers->get('Access-Control-Request-Method'));
+            $allowMethods = strtoupper((string) $request->getHeaderLine('Access-Control-Request-Method'));
             $this->varyHeader($response, 'Access-Control-Request-Method');
         } else {
             $allowMethods = implode(', ', $this->allowedMethods);
         }
 
-       $response = $response->withAddedHeader('Access-Control-Allow-Methods', $allowMethods);
+       $response->addHeader('Access-Control-Allow-Methods', $allowMethods);
     }
 
     private function configureAllowedHeaders(ResponseInterface $response, RequestInterface $request): void
     {
         if ($this->allowAllHeaders === true) {
-            $allowHeaders = (string) $request->headers->get('Access-Control-Request-Headers');
+            $allowHeaders = (string) $request->getHeaderLine('Access-Control-Request-Headers');
             $this->varyHeader($response, 'Access-Control-Request-Headers');
         } else {
             $allowHeaders = implode(', ', $this->allowedHeaders);
         }
-       $response = $response->withAddedHeader('Access-Control-Allow-Headers', $allowHeaders);
+       $response->addHeader('Access-Control-Allow-Headers', $allowHeaders);
     }
 
     private function configureAllowCredentials(ResponseInterface $response, RequestInterface $request): void
     {
         if ($this->supportsCredentials) {
-           $response = $response->withAddedHeader('Access-Control-Allow-Credentials', 'true');
+           $response->addHeader('Access-Control-Allow-Credentials', 'true');
         }
     }
 
     private function configureExposedHeaders(ResponseInterface $response, RequestInterface $request): void
     {
         if ($this->exposedHeaders) {
-           $response = $response->withAddedHeader('Access-Control-Expose-Headers', implode(', ', $this->exposedHeaders));
+           $response->addHeader('Access-Control-Expose-Headers', implode(', ', $this->exposedHeaders));
         }
     }
 
     private function configureMaxAge(ResponseInterface $response, RequestInterface $request): void
     {
         if ($this->maxAge !== null) {
-           $response = $response->withAddedHeader('Access-Control-Max-Age', (string) $this->maxAge);
+           $response->addHeader('Access-Control-Max-Age', (string) $this->maxAge);
         }
     }
 
     public function varyHeader(ResponseInterface $response, string $header): ResponseInterface
     {
         if (!$response->hasHeader('Vary')) {
-           $response = $response->withAddedHeader('Vary', $header);
-        } elseif (!in_array($header, explode(', ', (string) $response->headers->get('Vary')))) {
-           $response = $response->withAddedHeader('Vary', ((string) $response->headers->get('Vary')) . ', ' . $header);
+           $response->addHeader('Vary', $header);
+        } elseif (!in_array($header, explode(', ', (string) $response->getHeaderLine('Vary')))) {
+           $response->addHeader('Vary', ((string) $response->getHeaderLine('Vary')) . ', ' . $header);
         }
 
         return $response;
